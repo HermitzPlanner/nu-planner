@@ -10,7 +10,10 @@
 </head>
 
 <body>
-    <div class="planner-header">planner-header</div>
+    <div class="planner-header">
+        <input type="checkbox" name="amogus" id="header-theme">
+        <label for="header-theme">header-theme</label>
+    </div>
     <div class="planner-body">
         <div class="planner-events">
             <div class="planner-events-header">planner-events-header</div>
@@ -32,7 +35,8 @@
             <div class="planner-events-info">
                 <div class="planner-events-name">planner-events-name</div>
                 <div class="planner-events-image">
-                    <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_cc12operationbasepoint.jpg" alt="">
+                    <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_cc12operationbasepoint.jpg"
+                        alt="">
                 </div>
             </div>
             <div class="planner-events-calcs">
@@ -49,26 +53,64 @@
                 <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/portrait/aciddrop1.png"
                     alt="">
             </div>
-            
+
             <div class="planner-skins-model">model</div>
             <div class="planner-skins-price">price</div>
         </div>
 
     </template>
     <script>
-        const plannerEventsBodyTemplate = document.getElementById("planner-events-body")
-        const plannerSkinsBodyTemplate = document.getElementById("planner-skins-body")
+        async function main() {
+            const plannerEventsBodyTemplate = document.getElementById("planner-events-body")
+            const plannerSkinsBodyTemplate = document.getElementById("planner-skins-body")
 
-        for (let index = 0; index < 50; index++) {
-            // Import node
-            const eventsNode = document.importNode(plannerEventsBodyTemplate.content, true);
-            const skinsNode = document.importNode(plannerSkinsBodyTemplate.content, true);
-            // Modify node
+            const plannerEventsCall = await fetch('https://raw.githubusercontent.com/HermitzPlanner/hermitzplanner.github.io/main/json/events.json')
+            const plannerEventsData = await plannerEventsCall.json()
 
-            // Export node
-            document.querySelector(".planner-events-content").appendChild(eventsNode)
-            document.querySelector(".planner-skins-content").appendChild(skinsNode)
-        }
+            const plannerSkinsCall = await fetch('json/table_data.json')
+            const plannerSkinsData = await plannerSkinsCall.json()
+
+
+            plannerEventsData.forEach(plannerEvent => {
+                // Config
+                if (plannerEvent.status === "end") return;
+                if (plannerEvent.eventcode == "0011yunseries") { plannerEvent.event = "0011 / Yun Series" }
+
+                // Import node
+                const eventsNode = document.importNode(plannerEventsBodyTemplate.content, true);
+
+                // Modify node
+                const plannerEventsNameClone = eventsNode.querySelector(".planner-events-name")
+                plannerEventsNameClone.textContent = plannerEvent.event
+                const plannerEventsImageClone = eventsNode.querySelector(".planner-events-image img")
+                plannerEventsImageClone.src = "https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_" + plannerEvent.eventcode + ".jpg"
+
+                // Export node
+                document.querySelector(".planner-events-content").appendChild(eventsNode)
+
+
+                plannerSkinsData.forEach(plannerSkin => {
+                    // Config
+                    if (!(plannerEvent.newSkins.indexOf(plannerSkin.plannerId) !== -1 || plannerEvent.rerunSkins.indexOf(plannerSkin.plannerId) !== -1 || plannerSkin.fashionReview > 0 && plannerSkin.fashionReview <= plannerEvent.fashion)) { return }
+                    if (plannerSkin.plannerId !== "texas1") return;
+                    // Import node
+                    const skinsNode = document.importNode(plannerSkinsBodyTemplate.content, true);
+                    // Modify node
+                    const plannerSkinsModelClone = skinsNode.querySelector(".planner-skins-model")
+                    plannerSkinsModelClone.textContent = plannerSkin.modelNameEN
+                    const plannerSkinsPriceClone = skinsNode.querySelector(".planner-skins-price")
+                    plannerSkinsPriceClone.textContent = plannerSkin.skinPrice
+                    const plannerSkinsImageClone = skinsNode.querySelector(".planner-skins-image img")
+                    plannerSkinsImageClone.src = "https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/portrait/" + plannerSkin.plannerId + ".png"
+                    // Export node
+                    document.querySelector(".planner-skins-content").appendChild(skinsNode)
+                });
+
+
+            });
+        } main()
+
+
 
     </script>
 </body>
