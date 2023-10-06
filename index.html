@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style-mobile.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="planner-header">planner-header</div>
+    <div class="planner-body">
+        <div class="planner-events">
+            <div class="planner-events-header">planner-events-header</div>
+            <div class="planner-events-content">
+                <!-- planner-events-body -->
+            </div>
+
+        </div>
+        <div class="planner-skins">
+            <div class="planner-skins-header">planner-skins-header</div>
+            <div class="planner-skins-content">
+                <!-- planner-skins-body -->
+            </div>
+
+        </div>
+    </div>
+    <template id="planner-events-body">
+        <div class="planner-events-body">
+            <div class="planner-events-info">
+                <div class="planner-events-name">planner-events-name</div>
+                <div class="planner-events-image">
+                    <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_cc12operationbasepoint.jpg" alt="">
+                </div>
+            </div>
+            <div class="planner-events-calcs">
+                <div class="planner-events-current">current</div>
+                <div class="planner-events-reward">reward</div>
+                <div class="planner-events-cost">cost</div>
+                <div class="planner-events-total">total</div>
+            </div>
+        </div>
+    </template>
+    <template id="planner-skins-body">
+        <div class="planner-skins-body">
+            <div class="planner-skins-image">
+                <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/portrait/aciddrop1.png"
+                    alt="">
+            </div>
+            
+            <div class="planner-skins-model">model</div>
+            <div class="planner-skins-price">price</div>
+        </div>
+
+    </template>
+    <script>
+        const plannerEventsBodyTemplate = document.getElementById("planner-events-body")
+        const plannerSkinsBodyTemplate = document.getElementById("planner-skins-body")
+
+        for (let index = 0; index < 50; index++) {
+            // Import node
+            const eventsNode = document.importNode(plannerEventsBodyTemplate.content, true);
+            const skinsNode = document.importNode(plannerSkinsBodyTemplate.content, true);
+            // Modify node
+
+            // Export node
+            document.querySelector(".planner-events-content").appendChild(eventsNode)
+            document.querySelector(".planner-skins-content").appendChild(skinsNode)
+        }
+
+    </script>
+</body>
+
+</html>
