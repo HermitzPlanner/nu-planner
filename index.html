@@ -11,6 +11,7 @@
 
 <body>
     <div class="planner-header">
+        <a href="#stultiferanavisrerun">mogus</a>
         <input type="checkbox" name="amogus" id="header-theme">
         <label for="header-theme">header-theme</label>
     </div>
@@ -30,35 +31,49 @@
 
         </div>
     </div>
+
     <template id="planner-events-body">
-        <div class="planner-events-body">
-            <div class="planner-events-info">
-                <div class="planner-events-name">planner-events-name</div>
-                <div class="planner-events-image">
-                    <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_cc12operationbasepoint.jpg"
-                        alt="">
+
+        <input class="planner-events-cbox" type="checkbox" name="" id="">
+        <label class="planner-events-cbox-label" for="">
+            <!-- <a class="planner-events-link" name="" href="" style="all: unset;"></a> -->
+            <div class="planner-events-body">
+                <div class="planner-events-info">
+                    <div class="planner-events-name">planner-events-name</div>
+                    <div class="planner-events-image">
+                        <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_cc12operationbasepoint.jpg"
+                            alt="">
+                    </div>
+                </div>
+                <div class="planner-events-calcs">
+                    <div class="planner-events-current">current</div>
+                    <div class="planner-events-reward">reward</div>
+                    <div class="planner-events-cost">cost</div>
+                    <div class="planner-events-total">total</div>
                 </div>
             </div>
-            <div class="planner-events-calcs">
-                <div class="planner-events-current">current</div>
-                <div class="planner-events-reward">reward</div>
-                <div class="planner-events-cost">cost</div>
-                <div class="planner-events-total">total</div>
-            </div>
-        </div>
+
+        </label>
+
+
     </template>
+
     <template id="planner-skins-body">
-        <div class="planner-skins-body">
-            <div class="planner-skins-image">
-                <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/portrait/aciddrop1.png"
-                    alt="">
-            </div>
+        <input class="planner-skins-cbox" type="checkbox" name="" id="">
+        <label class="planner-skins-cbox-label" for="" id="">
+            <div class="planner-skins-body">
+                <div class="planner-skins-image">
+                    <img src="https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/portrait/aciddrop1.png"
+                        alt="">
+                </div>
 
-            <div class="planner-skins-model">model</div>
-            <div class="planner-skins-price">price</div>
-        </div>
+                <div class="planner-skins-model">model</div>
+                <div class="planner-skins-price">price</div>
+            </div>
+        </label>
 
     </template>
+
     <script>
         async function main() {
             const plannerEventsBodyTemplate = document.getElementById("planner-events-body")
@@ -70,32 +85,47 @@
             const plannerSkinsCall = await fetch('json/table_data.json')
             const plannerSkinsData = await plannerSkinsCall.json()
 
-
             plannerEventsData.forEach(plannerEvent => {
                 // Config
                 if (plannerEvent.status === "end") return;
+                if (plannerEvent.eventcode == "warmupeventforch12") return;
+                if (plannerEvent.eventcode == "warmupeventforch13") return;
                 if (plannerEvent.eventcode == "0011yunseries") { plannerEvent.event = "0011 / Yun Series" }
-
                 // Import node
                 const eventsNode = document.importNode(plannerEventsBodyTemplate.content, true);
-
                 // Modify node
+                // const plannerEventsLinkClone = eventsNode.querySelector(".planner-events-link")
+                // plannerEventsLinkClone.href = "#" + plannerEvent.eventcode
+                // plannerEventsLinkClone.setAttribute("name", plannerEvent.eventcode)
+
+                const plannerEventsCboxClone = eventsNode.querySelector(".planner-events-cbox")
+                plannerEventsCboxClone.setAttribute("id", "planner-events-cbox-" + plannerEvent.eventcode)
+                plannerEventsCboxClone.setAttribute("name", plannerEvent.eventcode)
+
+                const plannerEventsCboxLabelClone = eventsNode.querySelector(".planner-events-cbox-label")
+                plannerEventsCboxLabelClone.htmlFor = "planner-events-cbox-" + plannerEvent.eventcode
+                plannerEventsCboxLabelClone.setAttribute("id", "event-" + plannerEvent.eventcode)
+
                 const plannerEventsNameClone = eventsNode.querySelector(".planner-events-name")
                 plannerEventsNameClone.textContent = plannerEvent.event
                 const plannerEventsImageClone = eventsNode.querySelector(".planner-events-image img")
                 plannerEventsImageClone.src = "https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/resized/resized_" + plannerEvent.eventcode + ".jpg"
-
                 // Export node
                 document.querySelector(".planner-events-content").appendChild(eventsNode)
 
-
-                plannerSkinsData.forEach(plannerSkin => {
+                plannerSkinsData.slice().reverse().forEach(plannerSkin => {
                     // Config
                     if (!(plannerEvent.newSkins.indexOf(plannerSkin.plannerId) !== -1 || plannerEvent.rerunSkins.indexOf(plannerSkin.plannerId) !== -1 || plannerSkin.fashionReview > 0 && plannerSkin.fashionReview <= plannerEvent.fashion)) { return }
-                    if (plannerSkin.plannerId !== "texas1") return;
                     // Import node
                     const skinsNode = document.importNode(plannerSkinsBodyTemplate.content, true);
                     // Modify node
+                    const plannerSkinsCboxClone = skinsNode.querySelector(".planner-skins-cbox")
+                    plannerSkinsCboxClone.setAttribute("id", "planner-skins-cbox-" + plannerSkin.plannerId + "-event-" + plannerEvent.eventN)
+                    const plannerSkinsCboxLabelClone = skinsNode.querySelector(".planner-skins-cbox-label")
+                    plannerSkinsCboxLabelClone.htmlFor = "planner-skins-cbox-" + plannerSkin.plannerId + "-event-" + plannerEvent.eventN;
+                    plannerSkinsCboxLabelClone.classList.add(plannerEvent.eventcode)
+                    plannerSkinsCboxLabelClone.classList.add("display-none")
+
                     const plannerSkinsModelClone = skinsNode.querySelector(".planner-skins-model")
                     plannerSkinsModelClone.textContent = plannerSkin.modelNameEN
                     const plannerSkinsPriceClone = skinsNode.querySelector(".planner-skins-price")
@@ -105,9 +135,73 @@
                     // Export node
                     document.querySelector(".planner-skins-content").appendChild(skinsNode)
                 });
+            });
 
+            const skinsCboxAll = document.querySelectorAll(".planner-skins-cbox")
+            skinsCboxAll.forEach(skinCbox => {
+                skinCbox.addEventListener("click", () => {
+                    if (skinCbox.checked) {
+                        skinCbox.nextElementSibling.children[0].classList.add("checked")
+                    } else {
+                        skinCbox.nextElementSibling.children[0].classList.remove("checked")
+                    }
+                })
 
             });
+
+            let eventSelection = ""
+
+            const eventsCboxAll = document.querySelectorAll(".planner-events-cbox")
+            eventsCboxAll.forEach(eventCbox => {
+                eventCbox.addEventListener("change", () => {
+                    if (eventCbox.checked) {
+                        console.log("%cTRUE", "color: white; font-size: 18px; background: green;", eventCbox);
+                        eventCbox.nextElementSibling.children[0].classList.add("checked", "event-checked")
+
+                        eventSelection = eventCbox.name
+                        window.location.hash = eventSelection;
+
+                        const plannerSkinsContent = document.querySelector(".planner-skins-content")
+                        plannerSkinsContent.style.backgroundImage = `linear-gradient(rgba(13, 13, 13, 0.82), rgba(3, 3, 3, 0.90)), url(https://raw.githubusercontent.com/HermitzPlanner/planner-images/main/events/${eventSelection}.jpg)`;
+                        plannerSkinsContent.style.backgroundRepeat = "no-repeat";
+                        plannerSkinsContent.style.backgroundPosition = "center";
+                        plannerSkinsContent.style.backgroundSize = "cover";
+                    } else {
+                        eventCbox.nextElementSibling.children[0].classList.remove("checked", "event-checked")
+                        console.log("%cFALSE", "color: white; font-size: 18px; background: red;", eventCbox);
+                    }
+                    // Uncheck
+                    eventsCboxAll.forEach(otherEventCbox => {
+                        if (otherEventCbox.checked) {
+                            if (otherEventCbox.id == eventCbox.id) { return }
+                            console.log("%cOTHER TRUE", "color: white; font-size: 18px; background: blue;", otherEventCbox);
+                            otherEventCbox.nextElementSibling.children[0].classList.remove("checked", "event-checked")
+                            otherEventCbox.checked = false
+                        }
+
+                    });
+                    // Show skin
+                    skinsCboxAll.forEach(skinCbox => {
+                        const nextElement = skinCbox.nextElementSibling;
+                        if (nextElement.classList.contains(eventSelection)) {
+                            nextElement.classList.remove("display-none");
+                        } else if (!nextElement.classList.contains("display-none")) {
+                            nextElement.classList.add("display-none");
+                        }
+                    });
+                })
+            });
+
+            // Redirection
+            let newHash = location.hash.substring(1).replace("event-", "")
+            if (location.hash.substring(1).includes("event-")) {
+                location.hash.substring(1).replace("event-", "")
+                console.log(newHash)
+            }
+            document.getElementById("event-" + newHash).click()
+            window.location.hash = "event-" + newHash
+            window.location.hash = newHash
+
         } main()
 
 
